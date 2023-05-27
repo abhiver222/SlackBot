@@ -13,14 +13,16 @@ app.use(cors()); // Enable CORS
 
 
 app.get('/', (req, res) => {
+  console.log("healthy")
   res.send('SlackBot healthy');
 });
 
 
 app.get('/sendSlackMessage', async (req, res) => {
+  console.log("sending slack message")
   try {
     const url = 'https://slack.com/api/chat.postMessage';
-
+    console.log(slack_token)
     const response = await fetch(url, {
       method: 'POST',
       headers: {
