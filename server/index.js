@@ -3,7 +3,7 @@ import cors from 'cors';
 import fetch from 'node-fetch'
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 const slack_token = "xoxb-5339714760289-5351142889520-EuRZhPD7ORmnrYStqWYaDpZ3"
 
