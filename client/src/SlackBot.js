@@ -3,7 +3,7 @@ import { Container, Box } from '@mui/material';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
-import TextareaAutosize from '@mui/base/TextareaAutosize';
+import { TextareaAutosize } from '@mui/base';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SendIcon from '@mui/icons-material/Send';
 import { toast } from 'react-toastify';
