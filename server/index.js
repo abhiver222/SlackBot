@@ -5,7 +5,7 @@ import fetch from 'node-fetch'
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const slack_token = "xoxb-5339714760289-5351142889520-EuRZhPD7ORmnrYStqWYaDpZ3"
+const slack_token = process.env.slack_token
 
 // Middleware
 app.use(express.json()); // Parse JSON request bodies
@@ -13,7 +13,7 @@ app.use(cors()); // Enable CORS
 
 
 app.get('/', (req, res) => {
-  res.send('Hello, world!');
+  res.send('SlackBot healthy');
 });
 
 
@@ -25,7 +25,7 @@ app.get('/sendSlackMessage', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${slack_token}`
       },
       body: JSON.stringify({
         channel: '#general',
@@ -38,7 +38,7 @@ app.get('/sendSlackMessage', async (req, res) => {
 
     res.send('Message sent');
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).send('Error sending message');
   }
 })
