@@ -1,9 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch'
+import { createServer } from 'http';
+import { Server } from 'socket.io'
 
 const app = express();
+const server = createServer(app);
 const PORT = process.env.PORT || 3000;
+const io = new Server(server);
 
 const slack_token = process.env.slack_token
 
@@ -49,7 +53,18 @@ app.post('/sendSlackMessage', async (req, res) => {
   }
 })
 
+io.on('connection', (socket) => {
+  console.log('A client connected');
+
+  socket.on('clientEvent', (data) => {
+    console.log('Received data from client:', data);
+  });
+
+  socket.emit('serverEvent', 'Hello from the server!');
+});
+
+
 // Start the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
