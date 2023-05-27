@@ -18,11 +18,16 @@ app.get('/', (req, res) => {
 });
 
 
-app.get('/sendSlackMessage', async (req, res) => {
+app.post('/sendSlackMessage', async (req, res) => {
   console.log("sending slack message")
   try {
     const url = 'https://slack.com/api/chat.postMessage';
-    console.log(slack_token)
+    const message = req.body.message
+    console.log(message)
+    if(message === undefined){
+      res.status(200).send('Empty message')
+      return
+    }
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -31,13 +36,12 @@ app.get('/sendSlackMessage', async (req, res) => {
       },
       body: JSON.stringify({
         channel: '#general',
-        text: 'Hello, World2!'
+        text: message
       })
     });
 
     const data = await response.json();
     console.log('Done', data);
-
     res.send('Message sent');
   } catch (err) {
     console.error(err);
