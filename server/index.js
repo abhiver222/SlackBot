@@ -49,7 +49,7 @@ app.post('/sendSlackMessage', async (req, res) => {
 
     const data = await response.json();
     console.log('Done', data);
-    res.status(200).send({messageData: data});
+    res.status(200).json({messageData: data});
   } catch (err) {
     console.error(err);
     res.status(500).send('Error sending message');
@@ -87,7 +87,7 @@ app.post('/slackEvent', async (req, res) => {
       return
     }
     const sock = sockets[0]
-    sock.emit('serverEvent', 'Jello server!');
+    sock.emit('slackReplyEvent', {reply});
   }
   res.status(200).send({challenge: req.body.challenge})
 })
