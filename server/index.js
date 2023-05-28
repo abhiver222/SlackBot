@@ -84,7 +84,7 @@ app.post('/slackEvent', async (req, res) => {
 
 const getReplyEvent = (event) => {
   console.log("event", event, event.event)
-  if(isSome(event) || event.event.type !== "message"){ // non message event
+  if(!isSome(event) || event.event.type !== "message"){ // non message event
     return null
   }
   const ts = event.event.ts
