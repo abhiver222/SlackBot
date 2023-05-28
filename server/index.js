@@ -47,7 +47,7 @@ app.post('/sendSlackMessage', async (req, res) => {
 
     const data = await response.json();
     console.log('Done', data);
-    res.send('Message sent');
+    res.status(200).send({messageData: data});
   } catch (err) {
     console.error(err);
     res.status(500).send('Error sending message');

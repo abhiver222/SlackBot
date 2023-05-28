@@ -13,6 +13,7 @@ import io from 'socket.io-client';
 const SlackMessageBot = () => {
   const [message, setMessage] = useState('');
   const [messageSending, setMessageSending] = useState(false)
+  const [sentMessages, setSentMessages] = useState([])
 
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
@@ -30,11 +31,12 @@ const SlackMessageBot = () => {
       body: JSON.stringify({ message })
     }).then((response) => {        
         if (response.ok) {
-          console.log('Message sent successfully');
-          toast.success("message sent", {icon:false})
+          console.log('Message sent successfully', response);
+          toast.success("message sent")
+          setSentMessages([{response}, ...sentMessages])
         } else {
           console.error('Failed to send message:', response.status);
-          toast.error("message send failed", {icon:false})
+          toast.error("message send failed")
         }
       }).catch((error) => {
         console.error('Error sending message:', error);
@@ -89,6 +91,9 @@ const SlackMessageBot = () => {
                 
         </CardContent>
       </Card>
+      <div>
+        {}
+      </div>
     </Container>
   );
 };
