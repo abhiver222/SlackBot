@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 });
 
 const isSome = (val) => val !== undefined && val !== null
+const sockets = []
 
 app.post('/sendSlackMessage', async (req, res) => {
   console.log("sending slack message")
@@ -58,6 +59,7 @@ app.post('/sendSlackMessage', async (req, res) => {
 io.on('connection', (socket) => {
   console.log('A client connected');
 
+  sockets.append(socket)
   socket.on('clientEvent', (data) => {
     console.log('Received data from client:', data);
   });
@@ -79,7 +81,13 @@ app.post('/slackEvent', async (req, res) => {
     console.log("emitting reply event", reply)
     // io.emit('slackReplyEvent', "reply")
     // io.sockets.emit('slackReplyEvent', "reply")
-    socket.emit('serverEvent', 'Jello server!');
+    console.log("sockets", sockets)
+    if(sockets.length===0){
+      console.log("no socket")
+      return
+    }
+    const sock = sockets[0]
+    sock.emit('serverEvent', 'Jello server!');
   }
   res.status(200).send({challenge: req.body.challenge})
 })
