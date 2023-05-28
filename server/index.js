@@ -6,14 +6,13 @@ import { Server } from 'socket.io'
 
 const app = express();
 const server = createServer(app);
+const io = new Server(server, { cors: { origin: "https://slack-bot-wheat.vercel.app" } });
 const PORT = process.env.PORT || 3000;
-const io = new Server(server);
 
 const slack_token = process.env.slack_token
 
-// Middleware
-app.use(express.json()); // Parse JSON request bodies
-app.use(cors()); // Enable CORS
+app.use(express.json());
+app.use(cors());
 
 
 app.get('/', (req, res) => {
@@ -64,7 +63,6 @@ io.on('connection', (socket) => {
 });
 
 
-// Start the server
 server.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
