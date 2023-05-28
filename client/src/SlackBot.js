@@ -80,7 +80,7 @@ const SlackMessageBot = () => {
         return () => {
             socket.disconnect();
         };
-    }, []);
+    }, [messageResponses]);
 
     const testSocket = () => {
         console.log("socket button")
@@ -123,7 +123,7 @@ const SlackMessageBot = () => {
                         {message.ts}
                         <br/>
                         <ul>
-                            {replies.map(reply => <li>{reply.message} { " " } {reply.ts}</li>)}
+                            {replies?.map(reply => <li>{reply.message} { " " } {reply.ts}</li>)}
                         </ul>
                     </Typography>
                 </Card>
