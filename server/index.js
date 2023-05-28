@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 });
 
 const isSome = (val) => val !== undefined && val !== null
-const connectedSocket = null
+let connectedSocket = null
 const sockets = []
 
 app.post('/sendSlackMessage', async (req, res) => {
