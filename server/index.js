@@ -11,6 +11,7 @@ const io = new Server(server, { cors: { origin: clientUrl} });
 const PORT = process.env.PORT || 3000;
 
 const slack_token = process.env.slack_token
+const slack_verification_token = process.env.slack_verification_token
 
 app.use(express.json());
 app.use(cors({origin: [clientUrl]}))
@@ -64,7 +65,10 @@ io.on('connection', (socket) => {
 });
 
 app.post('/slackEvent', async (req, res) => {
-  console.log("slackEvent", req.body)
+  if(slack_verification_token !== req.body.token){
+    res.status(500).send("invalid request")
+    return
+  }
   res.status(200).send({challenge: req.body.challenge})
 })
 
