@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 });
 
 const isSome = (val) => val !== undefined && val !== null
+const connectedSocket = null
 const sockets = []
 
 app.post('/sendSlackMessage', async (req, res) => {
@@ -59,7 +60,7 @@ app.post('/sendSlackMessage', async (req, res) => {
 
 io.on('connection', (socket) => {
   console.log('A client connected');
-
+  connectedSocket = socket
   sockets.push(socket)
   socket.on('clientEvent', (data) => {
     console.log('Received data from client:', data);
@@ -83,13 +84,15 @@ app.post('/slackEvent', async (req, res) => {
     // io.emit('slackReplyEvent', "reply")
     // io.sockets.emit('slackReplyEvent', "reply")
     // console.log("sockets", sockets)
-    if(sockets.length===0){
+    console.log("con socket", connectedSocket)
+    console.log("socks", sockets)
+    if(!isSome(connectedSocket)){
       console.log("no socket")
       return
     }
-    const sock = sockets[0]
-    sock.emit('slackReplyEvent', "replydata");
-    sock.emit('slackReplyEvent', JSON.stringify(reply));
+    sockets[0].emit('slackReplyEvent', "replydata");
+    connectedSocket.emit('slackReplyEvent', "replydata");
+    // connectedSocket.emit('slackReplyEvent', JSON.stringify(reply));
   }
   res.status(200).send({challenge: req.body.challenge})
 })
