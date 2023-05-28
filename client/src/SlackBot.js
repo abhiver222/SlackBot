@@ -104,7 +104,13 @@ const SlackMessageBot = () => {
         </CardContent>
       </Card>
       <div>
-        {}
+        {sentMessages.map(message => 
+            <Card variant="outlined">
+                <Typography variant='h6' style={{marginTop:"10px", color:"white"}}>
+                    {message.message}
+                    {message.ts}
+                </Typography>
+            </Card>)}
       </div>
     </Container>
   );
