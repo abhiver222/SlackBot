@@ -77,24 +77,24 @@ app.post('/slackEvent', async (req, res) => {
   }
   console.log("valid event", req.body)
   const reply = getReplyEvent(req.body)
-  console.log("reply", reply)
+  // console.log("reply", reply)
   if(isSome(reply)){
     console.log("emitting reply event", reply)
     // io.emit('slackReplyEvent', "reply")
     // io.sockets.emit('slackReplyEvent', "reply")
-    console.log("sockets", sockets)
+    // console.log("sockets", sockets)
     if(sockets.length===0){
       console.log("no socket")
       return
     }
     const sock = sockets[0]
-    // sock.emit('slackReplyEvent', "replydata");
+    sock.emit('slackReplyEvent', "replydata");
     sock.emit('slackReplyEvent', JSON.stringify(reply));
   }
   res.status(200).send({challenge: req.body.challenge})
 })
 
-const getReplyEvent = (event) => {
+const getReplyEvent = (event) => { // change variable names
   console.log("event", event, event.event)
   if(!isSome(event) || event.event.type !== "message"){ // non message event
     return null
