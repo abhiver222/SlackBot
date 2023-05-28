@@ -10,7 +10,7 @@ function App() {
       <div className="App-header">
         <Typography variant='h2' style={{position: "absolute", top: "5%"}}>SlackBot</Typography>
         <SlackMessageBot style={{position: "absolute",top:0}}/>
-        <ToastContainer position='bottom-center' autoClose={2000} pauseOnHover theme="dark"/>
+        <ToastContainer position='bottom-center' autoClose={1000} pauseOnHover theme="dark"/>
       </div>
       
     </div>

@@ -77,7 +77,8 @@ app.post('/slackEvent', async (req, res) => {
   console.log("reply", reply)
   if(isSome(reply)){
     console.log("emitting reply event", reply)
-    io.emit('slackReplyEvent', {reply})
+    // io.emit('slackReplyEvent', {reply})
+    io.sockets.emit('slackReplyEvent', "reply")
   }
   res.status(200).send({challenge: req.body.challenge})
 })
