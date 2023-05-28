@@ -59,7 +59,7 @@ app.post('/sendSlackMessage', async (req, res) => {
 io.on('connection', (socket) => {
   console.log('A client connected');
 
-  sockets.append(socket)
+  sockets.push(socket)
   socket.on('clientEvent', (data) => {
     console.log('Received data from client:', data);
   });
