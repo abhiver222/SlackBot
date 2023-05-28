@@ -55,6 +55,10 @@ const SlackMessageBot = () => {
         socket.on('serverEvent', (data) => {
             console.log('Received socket data from server:', data);
         });
+        socket.on('slackReplyEvent', (data) => {
+            console.log("slack reply event", JSON.stringify(data, null, 2))
+        })
+
         socket.emit('clientEvent', { key: 'value' });
         return () => {
             socket.disconnect();
