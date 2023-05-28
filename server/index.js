@@ -65,10 +65,13 @@ io.on('connection', (socket) => {
 });
 
 app.post('/slackEvent', async (req, res) => {
+  console.log("in slack event listener")
   if(slack_verification_token !== req.body.token){
+    console.log("invalid token")
     res.status(500).send("invalid request")
     return
   }
+  console.log("valid event", req.body)
   res.status(200).send({challenge: req.body.challenge})
 })
 
