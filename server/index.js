@@ -87,7 +87,8 @@ app.post('/slackEvent', async (req, res) => {
       return
     }
     const sock = sockets[0]
-    sock.emit('slackReplyEvent', "replydata");
+    // sock.emit('slackReplyEvent', "replydata");
+    sock.emit('slackReplyEvent', reply);
   }
   res.status(200).send({challenge: req.body.challenge})
 })

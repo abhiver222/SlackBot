@@ -32,12 +32,11 @@ const SlackMessageBot = () => {
     }).then((response) => {  
               
         if (response.ok) {
-          console.log('Message sent successfully', response, response.json(), JSON.stringify(response.body, null, 2));
-          const res = response.json()
-          console.log("response", res)
+          console.log('Message sent successfully', response);
+          
           toast.success("message sent")
         //   setSentMessages([{response}, ...sentMessages])
-          return res
+          return response.json()
         } else {
           console.error('Failed to send message:', response.status);
           toast.error("message send failed")
