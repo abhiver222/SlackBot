@@ -74,6 +74,7 @@ app.post('/slackEvent', async (req, res) => {
   }
   console.log("valid event", req.body)
   const reply = getReplyEvent(req.body)
+  console.log("reply", reply)
   if(isSome(reply)){
     console.log("emitting reply event", reply)
     io.emit('slackReplyEvent', {reply})
