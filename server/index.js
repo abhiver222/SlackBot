@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
   res.send('SlackBot healthy');
 });
 
+const isSome = (val) => val !== undefined && val !== null
 
 app.post('/sendSlackMessage', async (req, res) => {
   console.log("sending slack message")
@@ -72,8 +73,25 @@ app.post('/slackEvent', async (req, res) => {
     return
   }
   console.log("valid event", req.body)
+  const reply = getReplyEvent(req.body)
+  if(isSome(reply)){
+    console.log("emitting reply event", reply)
+    io.emit('slackReplyEvent', {reply})
+  }
   res.status(200).send({challenge: req.body.challenge})
 })
+
+const getReplyEvent = (event) => {
+  if(isSome(event) || event.event.type !== "message"){ // non message event
+    return null
+  }
+  const ts = event.event.ts
+  const thread_ts = event.event.thread_ts
+  if(!isSome(thread_ts) || thread_ts === ts){ // not a reply
+    return null
+  }
+  return {parent: thread_ts, child: ts, replyContent: event.event.text}
+}
 
 
 server.listen(PORT, () => {
