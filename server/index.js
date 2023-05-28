@@ -90,7 +90,7 @@ app.post('/slackEvent', async (req, res) => {
       console.log("no socket")
       return
     }
-    sockets[0].emit('slackReplyEvent', "replydata");
+    // sockets[0].emit('slackReplyEvent', "replydata");
     connectedSocket.emit('slackReplyEvent', "replydata");
     // connectedSocket.emit('slackReplyEvent', JSON.stringify(reply));
   }
