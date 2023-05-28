@@ -14,6 +14,7 @@ const SlackMessageBot = () => {
   const [message, setMessage] = useState('');
   const [messageSending, setMessageSending] = useState(false)
   const [sentMessages, setSentMessages] = useState([])
+  const [messageResponses, setMessageResponses] = useState({})
 
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
@@ -42,8 +43,9 @@ const SlackMessageBot = () => {
           toast.error("message send failed")
           return
         }
-      }).then((data) => {
-        console.log("resp data", data)
+      }).then(({messageData}) => {
+        console.log("resp data", messageData)
+        setSentMessages([messageData, ...sentMessages])
       }).catch((error) => {
         console.error('Error sending message:', error);
       });
@@ -62,7 +64,7 @@ const SlackMessageBot = () => {
             console.log('Received socket data from server:', data);
         });
         socket.on('slackReplyEvent', (data) => {
-            console.log("slack reply event", JSON.stringify(data, null, 2))
+            console.log("slack reply event", data)
         })
 
         socket.emit('clientEvent', { key: 'value' });
