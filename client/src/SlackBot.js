@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { Container, Box } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Container} from '@mui/material';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
-import { TextareaAutosize } from '@mui/base';
+import { Button, TextareaAutosize } from '@mui/base';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SendIcon from '@mui/icons-material/Send';
 import { toast } from 'react-toastify';
+import io from 'socket.io-client';
+
 
 const SlackMessageBot = () => {
   const [message, setMessage] = useState('');
@@ -26,24 +28,42 @@ const SlackMessageBot = () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ message })
-    })
-      .then((response) => {
-        
+    }).then((response) => {        
         if (response.ok) {
-          console.log('Message sent successfully', {icon:false});
-          toast.success("message sent")
+          console.log('Message sent successfully');
+          toast.success("message sent", {icon:false})
         } else {
           console.error('Failed to send message:', response.status);
           toast.error("message send failed", {icon:false})
         }
-      })
-      .catch((error) => {
-
+      }).catch((error) => {
         console.error('Error sending message:', error);
       });
       setMessageSending(false)
       setMessage("")
   };
+
+    useEffect(() => {
+        const socket = io('https://abhislackbotserver.onrender.com/'); 
+
+        socket.on('connect', () => {
+            console.log('Connected to server socket');
+        });
+
+        socket.on('serverEvent', (data) => {
+            console.log('Received socket data from server:', data);
+        });
+        socket.emit('clientEvent', { key: 'value' });
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+
+    const testSocket = () => {
+        console.log("socket button")
+        const socket = io('https://abhislackbotserver.onrender.com/'); 
+        socket.emit('clientEvent', { key: 'button' });
+    }
 
   return (
     <Container style={{ marginTop: '10%' }}>
@@ -65,6 +85,7 @@ const SlackMessageBot = () => {
                         >
                         <span>Send</span>
                     </LoadingButton>
+                    <Button onClick={testSocket}>test socket</Button>
                 
         </CardContent>
       </Card>
