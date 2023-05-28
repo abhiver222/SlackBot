@@ -65,6 +65,15 @@ const SlackMessageBot = () => {
         });
         socket.on('slackReplyEvent', (data) => {
             console.log("slack reply event", data)
+            const {child, parent, replyContent} = data
+            const replies = {...messageResponses}
+            const replyObj = {message: replyContent, ts: child}
+            if(replies[parent]){
+                replies[parent].push(replyObj)
+            }else{
+                replies[parent] = [replyObj]
+            }
+            setMessageResponses(replies)
         })
 
         socket.emit('clientEvent', { key: 'value' });
@@ -104,14 +113,21 @@ const SlackMessageBot = () => {
         </CardContent>
       </Card>
       <div>
-        {sentMessages.map(message => 
-            <Card variant="outlined" sx={{ width: "50%", alignContent:"left", margin:"auto" ,marginTop: "5%", backgroundColor: "#3a3f4a", maxHeight: "300px"}}>
-                <Typography variant='h6' style={{marginTop:"10px", color:"white"}}>
-                    {message.message}
-                    <br/>
-                    {message.ts}
-                </Typography>
-            </Card>)}
+        {sentMessages.map(message => {
+            const replies = messageResponses[message.ts]
+            return (
+                <Card variant="outlined" sx={{ width: "50%", alignContent:"left", margin:"auto" ,marginTop: "5%", backgroundColor: "#3a3f4a", maxHeight: "300px"}}>
+                    <Typography variant='h6' style={{marginTop:"10px", color:"white"}}>
+                        {message.message}
+                        <br/>
+                        {message.ts}
+                        <br/>
+                        <ul>
+                            {replies.map(reply => <li>{reply.message} { " " } {reply.ts}</li>)}
+                        </ul>
+                    </Typography>
+                </Card>
+            )})}
       </div>
     </Container>
   );
