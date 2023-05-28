@@ -31,7 +31,7 @@ const SlackMessageBot = () => {
       body: JSON.stringify({ message })
     }).then((response) => {        
         if (response.ok) {
-          console.log('Message sent successfully', response);
+          console.log('Message sent successfully', JSON.stringify(response.body, null, 2));
           toast.success("message sent")
           setSentMessages([{response}, ...sentMessages])
         } else {
