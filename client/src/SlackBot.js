@@ -136,12 +136,16 @@ const SlackMessageBot = () => {
                           const replyTimestamp = reply.ts;
                           const replyDate = new Date(parseFloat(replyTimestamp) * 1000);
                           const formattedReplyDate = replyDate.toLocaleString();
-                          return (<ListItem key={reply.ts} sx={{ backgroundColor: "#333842", color:"white", borderRadius: '12px', px: 2, py: 1, mt: 1}}>
-                            <Typography style={{ maxHeight: "80px", overflow: "auto"}} variant='body1'>{getReplyString(reply.message)}</Typography>
+                          return (
+                            <Box key={reply.ts}>
+                            <ListItem sx={{ backgroundColor: "#333842", color:"white", borderRadius: '12px', px: 2, py: 1, mt: 1 }}>
+                              <Typography variant='body1'>{getReplyString(reply.message)}</Typography>
+                            </ListItem>
                             <Typography variant="body2" align="right" color="textSecondary">
-                                {formattedReplyDate}
+                              {formattedReplyDate}
                             </Typography>
-                          </ListItem>)
+                          </Box>
+                          )
           })}
                       </List>
                     </CardContent>
