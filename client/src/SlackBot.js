@@ -8,6 +8,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SendIcon from '@mui/icons-material/Send';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
+import emojione from 'emojione';
 
 
 const SlackMessageBot = () => {
@@ -15,6 +16,9 @@ const SlackMessageBot = () => {
   const [messageSending, setMessageSending] = useState(false)
   const [sentMessages, setSentMessages] = useState([])
   const [messageResponses, setMessageResponses] = useState({})
+
+  const emojiRegex = /:[a-zA-Z0-9_]+:/g;
+
 
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
@@ -123,7 +127,7 @@ const SlackMessageBot = () => {
                         {message.ts}
                         <br/>
                         <ul>
-                            {replies?.map(reply => <li>{reply.message} { " " } {reply.ts}</li>)}
+                            {replies?.map(reply => <li>{getReplyString(reply.message)} { " " } {reply.ts}</li>)}
                         </ul>
                     </Typography>
                 </Card>
@@ -132,5 +136,16 @@ const SlackMessageBot = () => {
     </Container>
   );
 };
+
+const getReplyString = (message) => {
+    const emojiRegex = /:[a-zA-Z0-9_]+:/g;
+    const emojiMessage = message.replace(emojiRegex, (shortcode) => {
+        const unicode = emojione.shortnameToUnicode(shortcode);
+        return unicode ? unicode : shortcode;
+    });
+    console.log(emojiMessage)
+    return emojiMessage
+
+}
 
 export default SlackMessageBot;
