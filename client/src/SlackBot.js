@@ -262,14 +262,25 @@ const getReplyString = (message) => {
     return message;
   }
   const emojiRegex = /:[a-zA-Z0-9_]+:/g;
-  const emojiMessage = message.replace(emojiRegex, (shortcode) => {
+  message = message.replace(emojiRegex, (shortcode) => {
     const unicode = emojione.shortnameToUnicode(shortcode);
     return unicode ? unicode : shortcode;
   });
-  console.log(emojiMessage);
+  console.log(message);
 
   const linkRegex = /<(.+?)\|(.+?)>/g;
-  return emojiMessage.replace(linkRegex, '[$2]($1)');
+  message = message.replace(linkRegex, '[$2]($1)');
+
+  const boldRegex = /\*(.+?)\*/g;
+  message = message.replace(boldRegex, '**$1**');
+
+  const codeBlockRegex = /```(.+?)```/gs;
+  message = message.replace(codeBlockRegex, (match, p1) => {
+    const code = p1.replace(/\\n/g, '\n');
+    return '```\n' + code + '\n```';
+  });
+
+  return message
 };
 
 export default SlackMessageBot;
