@@ -15,7 +15,7 @@ const isSome = (val) => val !== undefined && val !== null
 const SlackMessageBot = () => {
   const [message, setMessage] = useState('');
   const [messageSending, setMessageSending] = useState(false)
-  const [sentMessages, setSentMessages] = useState([{message:"test message", ts:"1"}, {message:"test message2", ts:"2"}, {message:"test message3", ts:"3"}, {message:"test message4", ts:"4"}])
+  const [sentMessages, setSentMessages] = useState([{message:"test message", ts:"1"}, {message:"test message2", ts:"2"}, {message:"test message3", ts:"3"}, {message:"test message4", ts:"4"}, {message:"test message4", ts:"5"}])
   const [messageResponses, setMessageResponses] = useState({"1": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}], 
                             "2": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
                             "3": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
@@ -106,15 +106,17 @@ const SlackMessageBot = () => {
                       {message.message}
                     </Typography>
                   </Box>
-                  <CardContent>
-                    <List>
-                      {replies?.map((reply, replyIndex) => 
-                        <ListItem key={replyIndex} sx={{ backgroundColor: "#333842", color:"white", borderRadius: '12px', px: 2, py: 1, mt: 1 }}>
-                          <Typography variant='body1'>{getReplyString(reply.message)}</Typography>
-                        </ListItem>
-                      )}
-                    </List>
-                  </CardContent>
+                  {replies && 
+                    <CardContent>
+                      <List sx={{py:0}}>
+                        {replies?.map((reply, replyIndex) => 
+                          <ListItem key={replyIndex} sx={{ backgroundColor: "#333842", color:"white", borderRadius: '12px', px: 2, py: 1, mt: 1 }}>
+                            <Typography variant='body1'>{getReplyString(reply.message)}</Typography>
+                          </ListItem>
+                        )}
+                      </List>
+                    </CardContent>
+                  }
                 </Card>
               </ListItem>
             );
