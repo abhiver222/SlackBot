@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container} from '@mui/material';
+import { Container, List, ListItem, Box, Grid,TextField} from '@mui/material';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
@@ -10,16 +10,19 @@ import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 import emojione from 'emojione';
 
+const isSome = (val) => val !== undefined && val !== null
 
 const SlackMessageBot = () => {
   const [message, setMessage] = useState('');
   const [messageSending, setMessageSending] = useState(false)
-  const [sentMessages, setSentMessages] = useState([])
-  const [messageResponses, setMessageResponses] = useState({})
+  const [sentMessages, setSentMessages] = useState([{message:"test message", ts:"1"}, {message:"test message2", ts:"2"}, {message:"test message3", ts:"3"}, {message:"test message4", ts:"4"}])
+  const [messageResponses, setMessageResponses] = useState({"1": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}], 
+                            "2": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
+                            "3": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
+                            "4": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}]})
 
-  const emojiRegex = /:[a-zA-Z0-9_]+:/g;
-
-
+  console.log("sentmsg", sentMessages)
+  console.log("responses", messageResponses)
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
   };
@@ -49,7 +52,7 @@ const SlackMessageBot = () => {
         }
       }).then(({messageData}) => {
         console.log("resp data", messageData)
-        setSentMessages([messageData, ...sentMessages])
+        setSentMessages([...sentMessages, messageData])
       }).catch((error) => {
         console.error('Error sending message:', error);
       });
@@ -86,58 +89,52 @@ const SlackMessageBot = () => {
         };
     }, [messageResponses]);
 
-    const testSocket = () => {
-        console.log("socket button")
-        const socket = io('https://abhislackbotserver.onrender.com/'); 
-        socket.emit('clientEvent', { key: 'button' });
-    }
-
-  return (
-    <Container style={{ marginTop: '10%' }}>
-      <Card variant="outlined" sx={{ width: "80%", alignContent:"center", margin:"auto" ,marginTop: "5%", backgroundColor: "#3a3f4a", maxHeight: "300px"}}>
-        <Typography variant='h4' style={{marginTop:"10px", color:"white"}}>
-            Send Message
-        </Typography>
-        <CardContent>
-                <TextareaAutosize style={{width:"100%", backgroundColor: "#49505e", color:"white", maxWidth:"100%", maxHeight: "150px", minHeigh:"50px", fontSize: "18px"}} minRows={3} maxRows={5} value={message} onChange={handleMessageChange}/>
-                
-                    <LoadingButton
-                        onClick={handleSendMessage}
-                        endIcon={<SendIcon />}
-                        loading={messageSending}
-                        loadingPosition="end"
-                        variant="contained"
-                        style={{marginTop:"12px"}}
-                        size='large'
-                        >
-                        <span>Send</span>
-                    </LoadingButton>
-                    <Button onClick={testSocket}>test socket</Button>
-                
-        </CardContent>
-      </Card>
-      <div>
-        {sentMessages.map(message => {
-            const replies = messageResponses[message.ts]
+    return (
+        <Container sx={{height: '97vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', py: 1, mt:1}}>
+      <Typography variant="h2" align="center" style={{color: "white"}} gutterBottom>
+        SlackBot
+      </Typography>
+      <Box sx={{ width: '80%', flexGrow: 1, maxHeight: '80%', overflowY: 'auto', backgroundColor: "#3a3f4a", px: 2, py: 1, mt: 2,mb: 1, display: 'flex', flexDirection: 'column-reverse'}}>
+        <List>
+          {sentMessages.map((message, index) => {
+            const replies = messageResponses[message.ts];
             return (
-                <Card variant="outlined" sx={{ width: "50%", alignContent:"left", margin:"auto" ,marginTop: "5%", backgroundColor: "#3a3f4a", maxHeight: "300px"}}>
-                    <Typography variant='h6' style={{marginTop:"10px", color:"white"}}>
-                        {message.message}
-                        <br/>
-                        {message.ts}
-                        <br/>
-                        <ul>
-                            {replies?.map(reply => <li>{getReplyString(reply.message)} { " " } {reply.ts}</li>)}
-                        </ul>
+              <ListItem key={index}>
+                <Card variant="outlined" sx={{ width: '100%', backgroundColor: "#49505e" }}>
+                  <Box sx={{ backgroundColor: "#0d47a1", px: 2, py: 1, borderRadius: '0px', color: 'white' }}>
+                    <Typography variant="h6">
+                      {message.message}
                     </Typography>
+                  </Box>
+                  <CardContent>
+                    <List>
+                      {replies?.map((reply, replyIndex) => 
+                        <ListItem key={replyIndex} sx={{ backgroundColor: "#333842", color:"white", borderRadius: '12px', px: 2, py: 1, mt: 1 }}>
+                          <Typography variant='body1'>{getReplyString(reply.message)}</Typography>
+                        </ListItem>
+                      )}
+                    </List>
+                  </CardContent>
                 </Card>
-            )})}
-      </div>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Box>
+      <Box sx={{ width: '80%', display: 'flex', alignItems: 'center' }}>
+        <TextField fullWidth multiline rows={2} variant="outlined" value={message} onChange={handleMessageChange} placeholder="What's on your mind?" inputProps={{ style: {color: "white"}}} sx={{ backgroundColor: "#49505e", color:"white", mr: 2}}/>
+        <Button variant="contained" onClick={handleSendMessage} disabled={messageSending}>
+          <SendIcon />
+        </Button>
+      </Box>
     </Container>
   );
 };
 
 const getReplyString = (message) => {
+    if(!isSome(message)){
+        return message
+    }
     const emojiRegex = /:[a-zA-Z0-9_]+:/g;
     const emojiMessage = message.replace(emojiRegex, (shortcode) => {
         const unicode = emojione.shortnameToUnicode(shortcode);
