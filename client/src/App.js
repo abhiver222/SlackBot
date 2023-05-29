@@ -11,7 +11,6 @@ function App() {
         <ToastContainer
           position="bottom-center"
           autoClose={1000}
-          pauseOnHover
           theme="dark"
         />
       </div>

@@ -9,6 +9,8 @@ import SendIcon from "@mui/icons-material/Send";
 import { toast } from "react-toastify";
 import io from "socket.io-client";
 import emojione from "emojione";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm'
 
 const isSome = (val) => val !== undefined && val !== null;
 
@@ -121,9 +123,6 @@ const SlackMessageBot = () => {
       console.log("Connected to server socket");
     });
 
-    socket.on("serverEvent", (data) => {
-      console.log("Received socket data from server:", data);
-    });
     socket.on("slackReplyEvent", (data) => {
       console.log("slack reply event", data);
       const { child, parent, replyContent } = data;
@@ -137,7 +136,6 @@ const SlackMessageBot = () => {
       setMessageResponses(replies);
     });
 
-    socket.emit("clientEvent", { key: "value" });
     return () => {
       socket.disconnect();
     };
@@ -178,7 +176,7 @@ const SlackMessageBot = () => {
           flexDirection: "column-reverse",
         }}
       >
-        <List>
+        <List sx={{mt:1}}>
           {sentMessages.map((messageObj) => {
             const {message, ts} = messageObj
             const replies = messageResponses[ts];
@@ -217,6 +215,7 @@ const SlackMessageBot = () => {
                                 }}
                               >
                                 <Typography variant="body1">
+                                    <ReactMarkdown children={getReplyString(reply.message)} remarkPlugins={[remarkGfm]}/>
                                   {getReplyString(reply.message)}
                                 </Typography>
                               </ListItem>
@@ -268,7 +267,9 @@ const getReplyString = (message) => {
     return unicode ? unicode : shortcode;
   });
   console.log(emojiMessage);
-  return emojiMessage;
+
+  const linkRegex = /<(.+?)\|(.+?)>/g;
+  return emojiMessage.replace(linkRegex, '[$2]($1)');
 };
 
 export default SlackMessageBot;
