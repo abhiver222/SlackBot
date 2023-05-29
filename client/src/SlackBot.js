@@ -280,7 +280,7 @@ const getReplyString = (message) => {
   });
 
   const bulletRegex = /•\s?(.+)/g;
-  message = message.replace(bulletRegex, '* $1');
+  message = message.replace(bulletRegex, '* •$1');
 
   return message
 };
