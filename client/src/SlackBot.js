@@ -15,14 +15,19 @@ const isSome = (val) => val !== undefined && val !== null
 const SlackMessageBot = () => {
   const [message, setMessage] = useState('');
   const [messageSending, setMessageSending] = useState(false)
-  const [sentMessages, setSentMessages] = useState([{message:"test message", ts:"1"}, {message:"test message2", ts:"2"}, {message:"test message3", ts:"3"}, {message:"test message4", ts:"4"}, {message:"test message4", ts:"5"}])
+  const [sentMessages, setSentMessages] = useState([{message:"test message", ts:"1"}, {message:"test message2", ts:"2"}, {message:"test message3", ts:"3"}, {message:"test message4", ts:"4"}, {message:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque varius morbi enim nunc faucibus. Nunc sed velit dignissim sodales. Faucibus vitae aliquet nec ullamcorper sit amet risus nullam. Velit scelerisque in dictum non consectetur a erat nam", ts:"5"}])
   const [messageResponses, setMessageResponses] = useState({"1": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}], 
-                            "2": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
-                            "3": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
-                            "4": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}]})
+  "2": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
+  "3": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
+  "4": [{message:"reply123",ts:"456"}, {message:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque varius morbi enim nunc faucibus. Nunc sed velit dignissim sodales. Faucibus vitae aliquet nec ullamcorper sit amet risus nullam. Velit scelerisque in dictum non consectetur a erat nam",ts:"46"}, {message:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque varius morbi enim nunc faucibus. Nunc sed velit dignissim sodales. Faucibus vitae aliquet nec ullamcorper sit amet risus nullam. Velit scelerisque in dictum non consectetur a erat namVelit scelerisque in dictum non consectetur a erat namVelit scelerisque in dictum non consectetur a erat namVelit scelerisque in dictum non consectetur a erat nam",ts:"56"}]})
+  
+//   {"1": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}], 
+//                             "2": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
+//                             "3": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
+//                             "4": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}]}
 
-  console.log("sentmsg", sentMessages)
-  console.log("responses", messageResponses)
+
+
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
   };
@@ -101,7 +106,7 @@ const SlackMessageBot = () => {
             return (
               <ListItem key={index}>
                 <Card variant="outlined" sx={{ width: '100%', backgroundColor: "#49505e" }}>
-                  <Box sx={{ backgroundColor: "#0d47a1", px: 2, py: 1, borderRadius: '0px', color: 'white' }}>
+                  <Box sx={{ backgroundColor: "#0d47a1", px: 2, py: 1, borderRadius: '0px', color: 'white', maxHeight: "100px", overflow:"auto" }}>
                     <Typography variant="h6">
                       {message.message}
                     </Typography>
@@ -110,8 +115,8 @@ const SlackMessageBot = () => {
                     <CardContent>
                       <List sx={{py:0}}>
                         {replies?.map((reply, replyIndex) => 
-                          <ListItem key={replyIndex} sx={{ backgroundColor: "#333842", color:"white", borderRadius: '12px', px: 2, py: 1, mt: 1 }}>
-                            <Typography variant='body1'>{getReplyString(reply.message)}</Typography>
+                          <ListItem key={replyIndex} sx={{ backgroundColor: "#333842", color:"white", borderRadius: '12px', px: 2, py: 1, mt: 1}}>
+                            <Typography style={{ maxHeight: "80px", overflow: "auto"}} variant='body1'>{getReplyString(reply.message)}</Typography>
                           </ListItem>
                         )}
                       </List>
