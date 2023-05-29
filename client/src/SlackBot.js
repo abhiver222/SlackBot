@@ -19,7 +19,7 @@ const SlackMessageBot = () => {
   const [messageResponses, setMessageResponses] = useState({"1": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}], 
   "2": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
   "3": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
-  "4": [{message:"reply123",ts:"456"}, {message:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque varius morbi enim nunc faucibus. Nunc sed velit dignissim sodales. Faucibus vitae aliquet nec ullamcorper sit amet risus nullam. Velit scelerisque in dictum non consectetur a erat nam",ts:"46"}, {message:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque varius morbi enim nunc faucibus. Nunc sed velit dignissim sodales. Faucibus vitae aliquet nec ullamcorper sit amet risus nullam. Velit scelerisque in dictum non consectetur a erat namVelit scelerisque in dictum non consectetur a erat namVelit scelerisque in dictum non consectetur a erat namVelit scelerisque in dictum non consectetur a erat nam",ts:"56"}]})
+  '1685335786.825419': [{message:"reply123",ts:"456"}, {message:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque varius morbi enim nunc faucibus. Nunc sed velit dignissim sodales. Faucibus vitae aliquet nec ullamcorper sit amet risus nullam. Velit scelerisque in dictum non consectetur a erat nam",ts:"46"}, {message:"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque varius morbi enim nunc faucibus. Nunc sed velit dignissim sodales. Faucibus vitae aliquet nec ullamcorper sit amet risus nullam. Velit scelerisque in dictum non consectetur a erat namVelit scelerisque in dictum non consectetur a erat namVelit scelerisque in dictum non consectetur a erat namVelit scelerisque in dictum non consectetur a erat nam",ts:"56"}]})
   
 //   {"1": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}], 
 //                             "2": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
@@ -32,7 +32,19 @@ const SlackMessageBot = () => {
     setMessage(event.target.value);
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        handleSendMessage();
+      }
+  }
+
   const handleSendMessage = () => {
+    console.log("handle send")
+    if(message.length === 0){
+        setMessage("")
+        return
+    }
     const apiEndpoint = 'https://abhislackbotserver.onrender.com/sendSlackMessage';
     setMessageSending(true)
 
@@ -103,6 +115,9 @@ const SlackMessageBot = () => {
         <List>
           {sentMessages.map((message, index) => {
             const replies = messageResponses[message.ts];
+            const timestamp = message.ts;
+            const date = new Date(parseFloat(timestamp) * 1000);
+            const messageDate = date.toLocaleString();
             return (
               <ListItem key={index}>
                 <Card variant="outlined" sx={{ width: '100%', backgroundColor: "#49505e" }}>
@@ -111,14 +126,23 @@ const SlackMessageBot = () => {
                       {message.message}
                     </Typography>
                   </Box>
+                  <Typography variant="body2" align="right" color="textSecondary">
+                    {messageDate}
+                  </Typography>
                   {replies && 
                     <CardContent>
                       <List sx={{py:0}}>
-                        {replies?.map((reply, replyIndex) => 
-                          <ListItem key={replyIndex} sx={{ backgroundColor: "#333842", color:"white", borderRadius: '12px', px: 2, py: 1, mt: 1}}>
+                        {replies?.map((reply) => {
+                          const replyTimestamp = reply.ts;
+                          const replyDate = new Date(parseFloat(replyTimestamp) * 1000);
+                          const formattedReplyDate = replyDate.toLocaleString();
+                          return (<ListItem key={reply.ts} sx={{ backgroundColor: "#333842", color:"white", borderRadius: '12px', px: 2, py: 1, mt: 1}}>
                             <Typography style={{ maxHeight: "80px", overflow: "auto"}} variant='body1'>{getReplyString(reply.message)}</Typography>
-                          </ListItem>
-                        )}
+                            <Typography variant="body2" align="right" color="textSecondary">
+                                {formattedReplyDate}
+                            </Typography>
+                          </ListItem>)
+          })}
                       </List>
                     </CardContent>
                   }
@@ -129,9 +153,9 @@ const SlackMessageBot = () => {
         </List>
       </Box>
       <Box sx={{ width: '80%', display: 'flex', alignItems: 'center' }}>
-        <TextField fullWidth multiline rows={2} variant="outlined" value={message} onChange={handleMessageChange} placeholder="What's on your mind?" inputProps={{ style: {color: "white"}}} sx={{ backgroundColor: "#49505e", color:"white", mr: 2}}/>
-        <Button variant="contained" onClick={handleSendMessage} disabled={messageSending}>
-          <SendIcon />
+        <TextField fullWidth multiline rows={2} variant="outlined" value={message} onChange={handleMessageChange} onKeyDown={handleKeyDown} placeholder="What's on your mind?" inputProps={{ style: {color: "white"}}} sx={{ backgroundColor: "#49505e", color:"white", mr: 2}}/>
+        <Button variant="contained" onClick={handleSendMessage} disabled={messageSending} color="secondary">
+          <SendIcon color="secondary"/>
         </Button>
       </Box>
     </Container>
