@@ -1,6 +1,5 @@
 import "./App.css";
 import SlackMessageBot from "./SlackBot";
-import Typography from "@mui/material/Typography";
 import { ToastContainer } from "react-toastify";
 
 function App() {

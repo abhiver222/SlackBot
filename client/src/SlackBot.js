@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Container, List, ListItem, Box, Grid, TextField } from "@mui/material";
-import Card from "@mui/material/Card";
+import { Container, List, ListItem, Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import CardContent from "@mui/material/CardContent";
-import { Button, TextareaAutosize } from "@mui/base";
-import LoadingButton from "@mui/lab/LoadingButton";
-import SendIcon from "@mui/icons-material/Send";
-import { toast } from "react-toastify";
-import io from "socket.io-client";
-import emojione from "emojione";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm'
 
-const isSome = (val) => val !== undefined && val !== null;
+import io from "socket.io-client";
+import { MessageCard } from "./MessageCard";
+import { ChatInput } from "./ChatInput";
 
 const SlackMessageBot = () => {
-  const [message, setMessage] = useState("");
-  const [messageSending, setMessageSending] = useState(false);
+
   const [sentMessages, setSentMessages] = useState([
     { message: "test message", ts: "1" },
     { message: "test message2", ts: "2" },
@@ -28,6 +19,11 @@ const SlackMessageBot = () => {
       ts: "5",
     },
   ]);
+
+  const addSentMessage = (messageData) => {
+    setSentMessages([...sentMessages, messageData]);
+  }
+
   const [messageResponses, setMessageResponses] = useState({
     1: [
       { message: "reply123", ts: "456" },
@@ -64,58 +60,7 @@ const SlackMessageBot = () => {
   //                             "3": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}],
   //                             "4": [{message:"reply123",ts:"456"}, {message:"reply456",ts:"46"}, {message:"reply789",ts:"56"}]}
 
-  const handleMessageChange = (event) => {
-    setMessage(event.target.value);
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      handleSendMessage();
-    }
-  };
-
-  const handleSendMessage = () => {
-    console.log("handle send");
-    if (message.length === 0) {
-      setMessage("");
-      return;
-    }
-    const apiEndpoint =
-      "https://abhislackbotserver.onrender.com/sendSlackMessage";
-    setMessageSending(true);
-
-    fetch(apiEndpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log("Message sent successfully", response);
-
-          toast.success("message sent");
-          //   setSentMessages([{response}, ...sentMessages])
-          return response.json();
-        } else {
-          console.error("Failed to send message:", response.status);
-          toast.error("message send failed");
-          return;
-        }
-      })
-      .then(({ messageData }) => {
-        console.log("resp data", messageData);
-        setSentMessages([...sentMessages, messageData]);
-      })
-      .catch((error) => {
-        console.error("Error sending message:", error);
-      });
-    setMessageSending(false);
-    setMessage("");
-  };
-
+  
   useEffect(() => {
     const socket = io("https://abhislackbotserver.onrender.com/");
 
@@ -182,109 +127,18 @@ const SlackMessageBot = () => {
             const replies = messageResponses[ts];
             return (
               <ListItem key={ts}>
-                <Card
-                  variant="outlined"
-                  sx={{ width: "100%", backgroundColor: "#49505e" }}
-                >
-                  <Box
-                    sx={{
-                      backgroundColor: "#0d47a1",
-                      px: 2,
-                      py: 1,
-                      borderRadius: "0px",
-                      color: "white",
-                      maxHeight: "100px",
-                      overflow: "auto",
-                    }}
-                  >
-                    <Typography variant="h6">{message}</Typography>
-                  </Box>
-                  {replies && (
-                    <CardContent>
-                      <List sx={{ py: 0 }}>
-                        {replies?.map((reply) => (
-                            <Box key={reply.ts}>
-                              <ListItem
-                                sx={{
-                                  backgroundColor: "#333842",
-                                  color: "white",
-                                  borderRadius: "12px",
-                                  px: 2,
-                                  py: 1,
-                                  mt: 1,
-                                }}
-                              >
-                                <Typography variant="body1">
-                                    <ReactMarkdown children={getReplyString(reply.message)} remarkPlugins={[remarkGfm]}/>
-                                  {getReplyString(reply.message)}
-                                </Typography>
-                              </ListItem>
-                            </Box>
-                          )
-                        )}
-                      </List>
-                    </CardContent>
-                  )}
-                </Card>
+                <MessageCard message={message} replies={replies}/>
               </ListItem>
             );
           })}
         </List>
       </Box>
-      <Box sx={{ width: "80%", display: "flex", alignItems: "center" }}>
-        <TextField
-          fullWidth
-          multiline
-          rows={2}
-          variant="outlined"
-          value={message}
-          onChange={handleMessageChange}
-          onKeyDown={handleKeyDown}
-          placeholder="What's on your mind?"
-          inputProps={{ style: { color: "white" } }}
-          sx={{ backgroundColor: "#49505e", color: "white", mr: 2 }}
-        />
-        <Button
-          variant="contained"
-          onClick={handleSendMessage}
-          disabled={messageSending}
-          color="secondary"
-        >
-          <SendIcon color="secondary" />
-        </Button>
-      </Box>
+      <ChatInput addSentMessage={addSentMessage} />
     </Container>
   );
 };
 
-const getReplyString = (message) => {
-  if (!isSome(message)) {
-    return message;
-  }
 
-  const emojiRegex = /:[a-zA-Z0-9_]+:/g;
-  message = message.replace(emojiRegex, (shortcode) => {
-    const unicode = emojione.shortnameToUnicode(shortcode);
-    return unicode ? unicode : shortcode;
-  });
-
-  const linkRegex = /<(.+?)\|(.+?)>/g;
-  message = message.replace(linkRegex, '[$2]($1)');
-
-  const boldRegex = /\*(.+?)\*/g;
-  message = message.replace(boldRegex, '**$1**');
-
-  const codeBlockRegex = /```(.+?)```/gs;
-  message = message.replace(codeBlockRegex, (_, p1) => {
-    const code = p1.replace(/\\n/g, '\n');
-    return '```\n' + code + '\n```';
-  });
-
-  const bulletRegex = /•\s?(.+)/g;
-  message = message.replace(bulletRegex, '\n- $1');
-
-  return message
-};
   
 
 export default SlackMessageBot;
