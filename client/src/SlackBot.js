@@ -266,7 +266,6 @@ const getReplyString = (message) => {
     const unicode = emojione.shortnameToUnicode(shortcode);
     return unicode ? unicode : shortcode;
   });
-  console.log(message);
 
   const linkRegex = /<(.+?)\|(.+?)>/g;
   message = message.replace(linkRegex, '[$2]($1)');
@@ -279,6 +278,9 @@ const getReplyString = (message) => {
     const code = p1.replace(/\\n/g, '\n');
     return '```\n' + code + '\n```';
   });
+
+  const bulletRegex = /•\s?(.+)/g;
+  message = message.replace(bulletRegex, '* $1');
 
   return message
 };
