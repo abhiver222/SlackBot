@@ -261,6 +261,7 @@ const getReplyString = (message) => {
   if (!isSome(message)) {
     return message;
   }
+
   const emojiRegex = /:[a-zA-Z0-9_]+:/g;
   message = message.replace(emojiRegex, (shortcode) => {
     const unicode = emojione.shortnameToUnicode(shortcode);
@@ -279,10 +280,36 @@ const getReplyString = (message) => {
     return '```\n' + code + '\n```';
   });
 
-  const bulletRegex = /•\s?(.+)/g;
-  message = message.replace(bulletRegex, '\n- $1');
+//   const bulletRegex = /•\s?(.+)/g;
+//   message = message.replace(bulletRegex, '\n- $1');
+  console.log("preprocess", message)
+  message = preprocessNestedList(message)
+  console.log("post nested",message)
 
   return message
 };
+
+const preprocessNestedList = (text) => {
+    let lines = text.split('\n');
+    let inList = false;
+    let listDepth = 0;
+  
+    for(let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+  
+      if (line.startsWith('• ') || line.startsWith('1. ')) {
+        inList = true;
+        listDepth = (line.match(/• |1. /g) || []).length;
+        lines[i] = '  '.repeat(listDepth - 1) + '- ' + line.split(/• |1. /).pop();
+      } else if (inList && line.startsWith('  '.repeat(listDepth))) {
+        lines[i] = '  '.repeat(listDepth) + '- ' + line.split(/• |1. /).pop();
+      } else {
+        inList = false;
+      }
+    }
+  
+    return lines.join('\n');
+  }
+  
 
 export default SlackMessageBot;
