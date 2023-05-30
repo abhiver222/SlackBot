@@ -3,7 +3,7 @@ import cors from "cors";
 import fetch from "node-fetch";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { CLIENT_URL, SLACK_SEND_API } from "./utils";
+import { CLIENT_URL, SLACK_SEND_API } from "../utils";
 
 const app = express();
 const server = createServer(app);
