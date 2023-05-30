@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 let connectedSocket = null;
 
 app.post("/sendSlackMessage", async (req, res) => {
-  console.log("sending slack message", message);
+  console.log("sending slack message");
   try {
     const url = SLACK_SEND_API;
     const message = req.body.message;
