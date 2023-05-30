@@ -56,7 +56,6 @@ export const MessageCard = (props) => {
                               >
                                 <Typography variant="body1">
                                     <ReactMarkdown children={getReplyString(reply.message)} remarkPlugins={[remarkGfm]}/>
-                                  {getReplyString(reply.message)}
                                 </Typography>
                               </ListItem>
                             </Box>

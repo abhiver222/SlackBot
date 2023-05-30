@@ -3,7 +3,7 @@ import { Button } from "@mui/base";
 import SendIcon from "@mui/icons-material/Send";
 import { toast } from "react-toastify";
 import { Box, TextField } from "@mui/material";
-
+import { SERVER_URL } from "./utils";
 
 export const ChatInput = (props) => {
     console.log(props)
@@ -29,7 +29,7 @@ export const ChatInput = (props) => {
         return;
       }
       const apiEndpoint =
-        "https://abhislackbotserver.onrender.com/sendSlackMessage";
+        `${SERVER_URL}/sendSlackMessage`;
       setMessageSending(true);
   
       fetch(apiEndpoint, {
