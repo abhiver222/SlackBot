@@ -64,6 +64,11 @@ export const ChatInput = (props) => {
     //   setMessage("");
     // };
 
+    const handleError = () => {
+      console.error("Failed to send message:");
+      toast.error("message send failed");
+    }
+
     const handleSendMessage = async () => {
       console.log("handle send");
       if (message.length === 0) {
@@ -73,25 +78,28 @@ export const ChatInput = (props) => {
       setMessageSending(true);
       const apiEndpoint =
         `${SERVER_URL}/sendSlackMessage`;
-  
-      const response = await fetch(apiEndpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message }),
-      })
-      if (response.ok) {
-        console.log("Message sent successfully", response);
-        toast.success("message sent");
-        const { messageData } = response.json();
-        console.log("resp data", messageData);
-        setMessage("");
-        addSentMessage(messageData)
-      } else {
-        console.error("Failed to send message:", response.status);
-        toast.error("message send failed");
-        return;
+      
+      try{
+        const response = await fetch(apiEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message }),
+        })
+        if (response.ok) {
+          console.log("Message sent successfully", response);
+          toast.success("message sent");
+          const { messageData } = await response.json();
+          console.log("resp data", messageData);
+          setMessage("");
+          addSentMessage(messageData)
+        } else {
+          handleError()
+        }
+      } catch(e){
+        console.error("Unable to call server", e)
+        handleError()
       }
       setMessageSending(false);
     };
