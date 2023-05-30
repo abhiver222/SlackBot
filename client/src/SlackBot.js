@@ -8,7 +8,7 @@ import { ChatInput } from "./ChatInput";
 
 const SlackMessageBot = () => {
 
-  const [sentMessages, setSentMessages] = useState();
+  const [sentMessages, setSentMessages] = useState([]);
   const [messageResponses, setMessageResponses] = useState({});
 
   const addSentMessage = (messageData) => {
