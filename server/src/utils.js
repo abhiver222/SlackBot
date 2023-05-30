@@ -5,15 +5,15 @@ export const isSome = (val) => val !== undefined && val !== null;
 
 export const getReplyEvent = ({event}) => {
     // change variable names
-    console.log("eventinfo", event, event.event);
+    console.log("eventinfo", event);
     
     // non message event
-    if (!isSome(event) || event.event.type !== "message") {
+    if (!isSome(event) || event.type !== "message") {
       return null;
     }
     // const ts = event.ts;
     // const thread_ts = event.thread_ts;
-    const {ts, thread_ts} = event
+    const {ts, thread_ts, text} = event
     console.log("ts", ts);
     console.log("thread_ts", thread_ts);
   
@@ -22,5 +22,5 @@ export const getReplyEvent = ({event}) => {
       return null;
     }
   
-    return { parent: thread_ts, child: ts, replyContent: event.event.text };
+    return { parent: thread_ts, child: ts, replyContent: text };
   };
