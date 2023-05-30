@@ -3,7 +3,7 @@ import cors from "cors";
 import fetch from "node-fetch";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { CLIENT_URL, SLACK_SEND_API } from "../utils";
+import { CLIENT_URL, SLACK_SEND_API, isSome, getReplyEvent } from "./utils.js";
 
 const app = express();
 const server = createServer(app);
@@ -21,7 +21,6 @@ app.get("/", (req, res) => {
   res.send("SlackBot healthy");
 });
 
-const isSome = (val) => val !== undefined && val !== null;
 let connectedSocket = null;
 
 app.post("/sendSlackMessage", async (req, res) => {
@@ -80,27 +79,27 @@ app.post("/slackEvent", async (req, res) => {
   res.status(200).send({ challenge: req.body.challenge });
 });
 
-const getReplyEvent = ({event}) => {
-  // change variable names
-  console.log("eventinfo", event, event.event);
+// const getReplyEvent = ({event}) => {
+//   // change variable names
+//   console.log("eventinfo", event, event.event);
   
-  // non message event
-  if (!isSome(event) || event.event.type !== "message") {
-    return null;
-  }
-  // const ts = event.ts;
-  // const thread_ts = event.thread_ts;
-  const {ts, thread_ts} = event
-  console.log("ts", ts);
-  console.log("thread_ts", thread_ts);
+//   // non message event
+//   if (!isSome(event) || event.event.type !== "message") {
+//     return null;
+//   }
+//   // const ts = event.ts;
+//   // const thread_ts = event.thread_ts;
+//   const {ts, thread_ts} = event
+//   console.log("ts", ts);
+//   console.log("thread_ts", thread_ts);
 
-  // not a reply
-  if (!isSome(thread_ts) || thread_ts === ts) {
-    return null;
-  }
+//   // not a reply
+//   if (!isSome(thread_ts) || thread_ts === ts) {
+//     return null;
+//   }
 
-  return { parent: thread_ts, child: ts, replyContent: event.event.text };
-};
+//   return { parent: thread_ts, child: ts, replyContent: event.event.text };
+// };
 
 server.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
