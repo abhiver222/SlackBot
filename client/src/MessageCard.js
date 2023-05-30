@@ -5,8 +5,7 @@ import { List, ListItem, Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import { getReplyString } from "./utils";
-import  styled  from '@emotion/styled';
-
+import styled from "@emotion/styled";
 
 /**
  * interface Reply {
@@ -62,9 +61,9 @@ export const MessageCard = (props) => {
 };
 
 const MessageReplyCard = styled(Card)`
-width: 100%; 
-background-color: #49505e;
-`
+  width: 100%;
+  background-color: #49505e;
+`;
 
 const MessageBubble = styled(Box)`
   background-color: #0d47a1;
