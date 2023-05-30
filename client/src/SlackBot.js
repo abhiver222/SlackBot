@@ -5,7 +5,8 @@ import { SERVER_URL, testMessageData, testResponseData } from "./utils";
 import io from "socket.io-client";
 import { MessageCard } from "./MessageCard";
 import { ChatInput } from "./ChatInput";
-import { styled } from '@mui/system';
+import { styled } from '@emotion/styled';
+
 
 
 const SlackMessageBot = () => {

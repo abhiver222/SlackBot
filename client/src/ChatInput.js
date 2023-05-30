@@ -4,7 +4,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { toast } from "react-toastify";
 import { Box, TextField } from "@mui/material";
 import { SERVER_URL } from "./utils";
-import { styled } from '@mui/system';
+import { styled } from '@emotion/styled';
 
 
 export const ChatInput = (props) => {
