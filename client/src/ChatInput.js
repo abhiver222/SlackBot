@@ -22,46 +22,78 @@ export const ChatInput = (props) => {
       }
     };
   
-    const handleSendMessage = () => {
+    // const handleSendMessage = () => {
+    //   console.log("handle send");
+    //   if (message.length === 0) {
+    //     setMessage("");
+    //     return;
+    //   }
+    //   setMessageSending(true);
+    //   const apiEndpoint =
+    //     `${SERVER_URL}/sendSlackMessage`;
+  
+    //   fetch(apiEndpoint, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ message }),
+    //   })
+    //     .then((response) => {
+    //       if (response.ok) {
+    //         console.log("Message sent successfully", response);
+  
+    //         toast.success("message sent");
+    //         //   setSentMessages([{response}, ...sentMessages])
+    //         return response.json();
+    //       } else {
+    //         console.error("Failed to send message:", response.status);
+    //         toast.error("message send failed");
+    //         return;
+    //       }
+    //     })
+    //     .then(({ messageData }) => {
+    //       console.log("resp data", messageData);
+    //       // setSentMessages([...sentMessages, messageData]);
+    //       addSentMessage(messageData)
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error sending message:", error);
+    //     });
+    //   setMessageSending(false);
+    //   setMessage("");
+    // };
+
+    const handleSendMessage = async () => {
       console.log("handle send");
       if (message.length === 0) {
         setMessage("");
         return;
       }
+      setMessageSending(true);
       const apiEndpoint =
         `${SERVER_URL}/sendSlackMessage`;
-      setMessageSending(true);
   
-      fetch(apiEndpoint, {
+      const response = await fetch(apiEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ message }),
       })
-        .then((response) => {
-          if (response.ok) {
-            console.log("Message sent successfully", response);
-  
-            toast.success("message sent");
-            //   setSentMessages([{response}, ...sentMessages])
-            return response.json();
-          } else {
-            console.error("Failed to send message:", response.status);
-            toast.error("message send failed");
-            return;
-          }
-        })
-        .then(({ messageData }) => {
-          console.log("resp data", messageData);
-          // setSentMessages([...sentMessages, messageData]);
-          addSentMessage(messageData)
-        })
-        .catch((error) => {
-          console.error("Error sending message:", error);
-        });
+      if (response.ok) {
+        console.log("Message sent successfully", response);
+        toast.success("message sent");
+        const { messageData } = response.json();
+        console.log("resp data", messageData);
+        setMessage("");
+        addSentMessage(messageData)
+      } else {
+        console.error("Failed to send message:", response.status);
+        toast.error("message send failed");
+        return;
+      }
       setMessageSending(false);
-      setMessage("");
     };
   
 

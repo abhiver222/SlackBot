@@ -8,7 +8,7 @@ function App() {
       <div className="App-header">
         <SlackMessageBot style={{ position: "absolute", top: 0 }} />
         <ToastContainer
-          position="bottom-center"
+          position="top-right"
           autoClose={1000}
           theme="dark"
         />
