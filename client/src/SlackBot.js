@@ -76,7 +76,7 @@ const SlackMessageBot = () => {
         }}
       >
         <List sx={{mt:1}}>
-          {sentMessages.map((messageObj) => {
+          {sentMessages?.map((messageObj) => {
             const {message, ts} = messageObj
             const replies = messageResponses[ts];
             return (
