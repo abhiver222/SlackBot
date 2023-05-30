@@ -5,7 +5,7 @@ import { List, ListItem, Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import { getReplyString } from "./utils";
-import { styled } from '@emotion/styled';
+import  styled  from '@emotion/styled';
 
 
 /**
