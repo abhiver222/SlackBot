@@ -5,16 +5,17 @@ import { SERVER_URL, testMessageData, testResponseData } from "./utils";
 import io from "socket.io-client";
 import { MessageCard } from "./MessageCard";
 import { ChatInput } from "./ChatInput";
+import { styled } from '@mui/system';
+
 
 const SlackMessageBot = () => {
-
   const [sentMessages, setSentMessages] = useState(testMessageData);
   const [messageResponses, setMessageResponses] = useState(testResponseData);
 
   const addSentMessage = (messageData) => {
     setSentMessages([...sentMessages, messageData]);
-  }
-  
+  };
+
   useEffect(() => {
     const socket = io(SERVER_URL);
 
@@ -41,17 +42,7 @@ const SlackMessageBot = () => {
   }, [messageResponses]);
 
   return (
-    <Container
-      sx={{
-        height: "97vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "space-between",
-        py: 1,
-        mt: 1,
-      }}
-    >
+    <SlackBotContainer>
       <Typography
         variant="h2"
         align="center"
@@ -60,39 +51,45 @@ const SlackMessageBot = () => {
       >
         SlackBot
       </Typography>
-      <Box
-        sx={{
-          width: "80%",
-          flexGrow: 1,
-          maxHeight: "80%",
-          overflowY: "auto",
-          backgroundColor: "#3a3f4a",
-          px: 2,
-          py: 1,
-          mt: 2,
-          mb: 1,
-          display: "flex",
-          flexDirection: "column-reverse",
-        }}
-      >
-        <List sx={{mt:1}}>
+      <ChatWindow>
+        <List sx={{ mt: 1 }}>
           {sentMessages?.map((messageObj) => {
-            const {message, ts} = messageObj
+            const { message, ts } = messageObj;
             const replies = messageResponses[ts];
             return (
               <ListItem key={ts}>
-                <MessageCard message={message} replies={replies}/>
+                <MessageCard message={message} replies={replies} />
               </ListItem>
             );
           })}
         </List>
-      </Box>
+      </ChatWindow>
       <ChatInput addSentMessage={addSentMessage} />
-    </Container>
+    </SlackBotContainer>
   );
 };
 
+const SlackBotContainer = styled(Container)`
+height: 97vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: space-between;
+padding-top: 8px;
+margin-top: 8px;
+`
 
-  
+const ChatWindow = styled(Box)`
+    width: 80%;
+    flex-grow: 1;
+    max-height: 80%;
+    overflow-y: auto;
+    background-color: #3a3f4a;
+    padding: 8px;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column-reverse;
+`
 
 export default SlackMessageBot;

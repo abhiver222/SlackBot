@@ -4,9 +4,10 @@ import SendIcon from "@mui/icons-material/Send";
 import { toast } from "react-toastify";
 import { Box, TextField } from "@mui/material";
 import { SERVER_URL } from "./utils";
+import { styled } from '@mui/system';
+
 
 export const ChatInput = (props) => {
-    console.log(props)
     const { addSentMessage } = props
     const [message, setMessage] = useState("");
     const [messageSending, setMessageSending] = useState(false);
@@ -21,48 +22,6 @@ export const ChatInput = (props) => {
         handleSendMessage();
       }
     };
-  
-    // const handleSendMessage = () => {
-    //   console.log("handle send");
-    //   if (message.length === 0) {
-    //     setMessage("");
-    //     return;
-    //   }
-    //   setMessageSending(true);
-    //   const apiEndpoint =
-    //     `${SERVER_URL}/sendSlackMessage`;
-  
-    //   fetch(apiEndpoint, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ message }),
-    //   })
-    //     .then((response) => {
-    //       if (response.ok) {
-    //         console.log("Message sent successfully", response);
-  
-    //         toast.success("message sent");
-    //         //   setSentMessages([{response}, ...sentMessages])
-    //         return response.json();
-    //       } else {
-    //         console.error("Failed to send message:", response.status);
-    //         toast.error("message send failed");
-    //         return;
-    //       }
-    //     })
-    //     .then(({ messageData }) => {
-    //       console.log("resp data", messageData);
-    //       // setSentMessages([...sentMessages, messageData]);
-    //       addSentMessage(messageData)
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error sending message:", error);
-    //     });
-    //   setMessageSending(false);
-    //   setMessage("");
-    // };
 
     const handleError = () => {
       console.error("Failed to send message:");
@@ -70,7 +29,6 @@ export const ChatInput = (props) => {
     }
 
     const handleSendMessage = async () => {
-      console.log("handle send");
       if (message.length === 0) {
         setMessage("");
         return;
@@ -106,7 +64,7 @@ export const ChatInput = (props) => {
   
 
     return (
-        <Box sx={{ width: "80%", display: "flex", alignItems: "center" }}>
+      <ChatInputBox>
         <TextField
           fullWidth
           multiline
@@ -127,6 +85,12 @@ export const ChatInput = (props) => {
         >
           <SendIcon color="secondary" />
         </Button>
-      </Box>
+      </ChatInputBox>
     )
 }
+
+const ChatInputBox = styled(Box)`
+  width: 80%;
+  display: flex;
+  align-items: center;
+`;
