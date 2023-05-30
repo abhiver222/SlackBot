@@ -22,7 +22,14 @@ app.get("/", (req, res) => {
 });
 
 let connectedSocket = null;
+io.on("connection", (socket) => {
+  console.log("A client connected");
+  connectedSocket = socket;
+});
 
+/**
+ * post handler to send messages to slack send messagee endpoint
+ */
 app.post("/sendSlackMessage", async (req, res) => {
   console.log("sending slack message");
   try {
@@ -53,11 +60,9 @@ app.post("/sendSlackMessage", async (req, res) => {
   }
 });
 
-io.on("connection", (socket) => {
-  console.log("A client connected");
-  connectedSocket = socket;
-});
-
+/**
+ * post handler to receive webhook events from Slack events API
+ */
 app.post("/slackEvent", async (req, res) => {
   console.log("in slack event listener");
   if (slack_verification_token !== req.body.token) {

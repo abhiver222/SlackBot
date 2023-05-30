@@ -4,29 +4,37 @@ export const SERVER_URL = "https://abhislackbotserver.onrender.com";
 
 export const isSome = (val) => val !== undefined && val !== null;
 
+/**
+ * preprocess function before rendering the reply string
+ */
 export const getReplyString = (message) => {
   if (!isSome(message)) {
     return message;
   }
 
+  // add any emojis
   const emojiRegex = /:[a-zA-Z0-9_]+:/g;
   message = message.replace(emojiRegex, (shortcode) => {
     const unicode = emojione.shortnameToUnicode(shortcode);
     return unicode ? unicode : shortcode;
   });
 
+  // reformat links to markdown
   const linkRegex = /<(.+?)\|(.+?)>/g;
   message = message.replace(linkRegex, "[$2]($1)");
 
+  // reformat bolds to markdown
   const boldRegex = /\*(.+?)\*/g;
   message = message.replace(boldRegex, "**$1**");
 
+  // reformat multiline code to markdown
   const codeBlockRegex = /```(.+?)```/gs;
   message = message.replace(codeBlockRegex, (_, p1) => {
     const code = p1.replace(/\\n/g, "\n");
     return "```\n" + code + "\n```";
   });
 
+  // reformat unordered lists to markdown
   const bulletRegex = /•\s?(.+)/g;
   message = message.replace(bulletRegex, "- -$1");
 
