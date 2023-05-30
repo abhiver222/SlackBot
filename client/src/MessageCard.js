@@ -51,11 +51,14 @@ export const MessageCard = (props) => {
                                   borderRadius: "12px",
                                   px: 2,
                                   py: 1,
-                                  mt: 1,
+                                  mt: 1,                            
                                 }}
                               >
-                                <Typography variant="body1">
-                                    <ReactMarkdown children={getReplyString(reply.message)} remarkPlugins={[remarkGfm]}/>
+                                <Typography variant="body1" style={{overflow: "auto", maxHeight: "60px",}}>
+                                    <ReactMarkdown children={getReplyString(reply.message)} remarkPlugins={[remarkGfm]} components={{
+    p: ({node, ...props}) => <p {...props} style={{margin: '0'}} />,
+    ol: ({node, ...props}) => <ol {...props} style={{marginRight: '0'}} />,
+  }}/>
                                 </Typography>
                               </ListItem>
                             </Box>

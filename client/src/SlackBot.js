@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Container, List, ListItem, Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { SERVER_URL } from "./utils";
+import { SERVER_URL, testMessageData, testResponseData } from "./utils";
 import io from "socket.io-client";
 import { MessageCard } from "./MessageCard";
 import { ChatInput } from "./ChatInput";
 
 const SlackMessageBot = () => {
 
-  const [sentMessages, setSentMessages] = useState([]);
-  const [messageResponses, setMessageResponses] = useState({});
+  const [sentMessages, setSentMessages] = useState(testMessageData);
+  const [messageResponses, setMessageResponses] = useState(testResponseData);
 
   const addSentMessage = (messageData) => {
     setSentMessages([...sentMessages, messageData]);
