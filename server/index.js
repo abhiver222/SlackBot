@@ -3,18 +3,18 @@ import cors from "cors";
 import fetch from "node-fetch";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { CLIENT_URL, SLACK_SEND_API } from "./utils";
 
 const app = express();
 const server = createServer(app);
-const clientUrl = "https://slack-bot-wheat.vercel.app";
-const io = new Server(server, { cors: { origin: clientUrl } });
+const io = new Server(server, { cors: { origin: CLIENT_URL } });
 const PORT = process.env.PORT || 3000;
 
 const slack_token = process.env.slack_token;
 const slack_verification_token = process.env.slack_verification_token;
 
 app.use(express.json());
-app.use(cors({ origin: [clientUrl] }));
+app.use(cors({ origin: [CLIENT_URL] }));
 
 app.get("/", (req, res) => {
   console.log("healthy");
@@ -25,11 +25,10 @@ const isSome = (val) => val !== undefined && val !== null;
 let connectedSocket = null;
 
 app.post("/sendSlackMessage", async (req, res) => {
-  console.log("sending slack message");
+  console.log("sending slack message", message);
   try {
-    const url = "https://slack.com/api/chat.postMessage";
+    const url = SLACK_SEND_API;
     const message = req.body.message;
-    console.log(message);
     if (message === undefined) {
       res.status(200).send("Empty message");
       return;
@@ -47,7 +46,6 @@ app.post("/sendSlackMessage", async (req, res) => {
     });
 
     const data = await response.json();
-    console.log("Done", data);
     const messageData = { ts: data.message.ts, message: data.message.text };
     res.status(200).json({ messageData });
   } catch (err) {
@@ -59,11 +57,6 @@ app.post("/sendSlackMessage", async (req, res) => {
 io.on("connection", (socket) => {
   console.log("A client connected");
   connectedSocket = socket;
-  socket.on("clientEvent", (data) => {
-    console.log("Received data from client:", data);
-  });
-
-  socket.emit("serverEvent", "Hello from the server!");
 });
 
 app.post("/slackEvent", async (req, res) => {
@@ -73,41 +66,39 @@ app.post("/slackEvent", async (req, res) => {
     res.status(500).send("invalid request");
     return;
   }
-  console.log("valid event", req.body);
+
   const reply = getReplyEvent(req.body);
-  // console.log("reply", reply)
+  
   if (isSome(reply)) {
     console.log("emitting reply event", reply);
-    // io.emit('slackReplyEvent', "reply")
-    // io.sockets.emit('slackReplyEvent', "reply")
-    // console.log("sockets", sockets)
-
     if (!isSome(connectedSocket)) {
       console.log("no socket");
       return;
     }
-    // sockets[0].emit('slackReplyEvent', "replydata");
     connectedSocket.emit("slackReplyEvent", reply);
-    // connectedSocket.emit('slackReplyEvent', JSON.stringify(reply));
   }
   res.status(200).send({ challenge: req.body.challenge });
 });
 
-const getReplyEvent = (event) => {
+const getReplyEvent = ({event}) => {
   // change variable names
   console.log("eventinfo", event, event.event);
+  
+  // non message event
   if (!isSome(event) || event.event.type !== "message") {
-    // non message event
     return null;
   }
-  const ts = event.event.ts;
-  const thread_ts = event.event.thread_ts;
+  // const ts = event.ts;
+  // const thread_ts = event.thread_ts;
+  const {ts, thread_ts} = event
   console.log("ts", ts);
   console.log("thread_ts", thread_ts);
+
+  // not a reply
   if (!isSome(thread_ts) || thread_ts === ts) {
-    // not a reply
     return null;
   }
+
   return { parent: thread_ts, child: ts, replyContent: event.event.text };
 };
 
